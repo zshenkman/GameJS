@@ -1,0 +1,34 @@
+{
+  "name": "gamejs",
+  "version": "1.0.0",
+  "author": "Zach Shenkman",
+  "description": "A wrapper for Socket.io that allows for easy room-based JavaScript game creation",
+  "keywords": [
+    "game",
+    "javascript"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": ["lib/**/*"],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "dependencies": {
+    "http": "*",
+    "socket.io": "^4.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zshenkman/GameJS"
+  }
+}
