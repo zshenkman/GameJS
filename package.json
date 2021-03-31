@@ -1,5 +1,5 @@
 {
-  "name": "gamejs",
+  "name": "gamekitjs",
   "version": "1.0.0",
   "author": "Zach Shenkman",
   "description": "A wrapper for Socket.io that allows for easy room-based JavaScript game creation",

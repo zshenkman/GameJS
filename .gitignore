@@ -108,3 +108,5 @@ lib/
 
 # Code editor files
 .vscode/
+
+.DS_Store
