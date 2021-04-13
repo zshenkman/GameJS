@@ -1,20 +1,46 @@
-import { Socket } from 'socket.io';
-import { Room } from './Room';
+import { Socket } from "socket.io";
+import GameInstance from "./../index";
 
 export class Player {
   displayName: string;
   points: number;
-  properties: object;
-  room: Room;
-  socket: Socket | null;
+  roomCode: string | null;
+  socketID: string;
   wins: number;
 
-  constructor(room: Room, socket?: Socket, displayName?: string) {
-    this.displayName = displayName || 'Player';
+  constructor(displayName?: string, roomCode?: string, socketID?: string) {
+    this.displayName = displayName || "Player";
     this.points = 0;
-    this.properties = new Object();
-    this.room = room;
-    this.socket = socket || null;
+    this.roomCode = roomCode || null;
+    this.socketID = socketID || "";
     this.wins = 0;
+  }
+
+  addPoints(points: number) {
+    if (!this.roomCode) return;
+    const room = GameInstance.game.getRoom(this.roomCode);
+
+    this.points += points;
+    room.roundWinner = this;
+    if (this.points >= room?.maxPoints) {
+      this.addWin();
+    }
+  }
+
+  addWin() {
+    if (!this.roomCode) return;
+    const room = GameInstance.game.getRoom(this.roomCode);
+
+    this.wins++;
+    room.gameWinner = this;
+    room.endGame();
+  }
+
+  broadcastToRoom(event: string, data: any) {
+    if (!this.roomCode) return;
+    const room = GameInstance.game.getRoom(this.roomCode);
+
+    const excludedSocketIDs = [this.socketID];
+    room.broadcast(event, data, excludedSocketIDs);
   }
 }

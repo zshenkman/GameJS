@@ -1,6 +1,6 @@
 {
   "name": "gamekitjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Zach Shenkman",
   "description": "A wrapper for Socket.io that allows for easy room-based JavaScript game creation",
   "keywords": [
@@ -10,7 +10,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": ["lib/**/*"],
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
@@ -19,7 +21,8 @@
   },
   "dependencies": {
     "http": "*",
-    "socket.io": "^4.0.0"
+    "socket.io": "^4.0.1",
+    "socket.io-client": "^4.0.1"
   },
   "devDependencies": {
     "prettier": "^2.2.1",
@@ -29,6 +32,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zshenkman/GameJS"
+    "url": "https://github.com/zshenkman/GameKitJS"
   }
 }
