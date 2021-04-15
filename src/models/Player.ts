@@ -36,11 +36,13 @@ export class Player {
     room.endGame();
   }
 
-  broadcastToRoom(event: string, data: any) {
+  broadcastToRoom(event: string, ...data: any) {
     if (!this.roomCode) return;
     const room = GameInstance.game.getRoom(this.roomCode);
 
-    const excludedSocketIDs = [this.socketID];
-    room.broadcast(event, data, excludedSocketIDs);
+    const otherSocketsIDs = room.players
+      .filter((el) => el.socketID !== this.socketID)
+      .map((el) => el.socketID);
+    room.broadcastToSockets(otherSocketsIDs, event, ...data);
   }
 }

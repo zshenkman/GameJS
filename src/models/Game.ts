@@ -33,13 +33,8 @@ export class Game {
     }
   }
 
-  createRoom(
-    host: Player,
-    minPlayers: number,
-    maxPlayers: number,
-    maxPoints: number
-  ) {
-    const room = new Room(host, minPlayers, maxPlayers, maxPoints);
+  createRoom(minPlayers: number, maxPlayers: number, maxPoints: number) {
+    const room = new Room(minPlayers, maxPlayers, maxPoints);
     this.rooms.set(room.code, room);
     return room;
   }

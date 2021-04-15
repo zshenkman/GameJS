@@ -7,34 +7,29 @@ export class Room {
   code: string;
   gameType: string | null;
   gameWinner: Player | null;
-  host: Player;
+  host: Player | null;
   isInProgress: boolean;
   isPublic: boolean;
   maxPlayers: number;
   maxPoints: number;
   minPlayers: number;
   players: Player[];
+  roundsCounter: number;
   roundWinner: Player | null;
 
-  constructor(
-    host: Player,
-    minPlayers: number,
-    maxPlayers: number,
-    maxPoints: number
-  ) {
+  constructor(minPlayers: number, maxPlayers: number, maxPoints: number) {
     this.code = Room.generateCode(ROOM_CODE_LENGTH);
     this.gameType = null;
     this.gameWinner = null;
-    this.host = host;
+    this.host = null;
     this.isInProgress = false;
     this.isPublic = false;
     this.maxPlayers = maxPlayers || 8;
     this.maxPoints = maxPoints || 7;
     this.minPlayers = minPlayers || 2;
-    this.players = [host];
+    this.players = [];
+    this.roundsCounter = 0;
     this.roundWinner = null;
-
-    this.host.roomCode = this.code;
   }
 
   private static generateCode(length: number) {
@@ -59,6 +54,11 @@ export class Room {
 
     const player = new Player(displayName, this.code, socketID);
     this.players.push(player);
+
+    if (!this.host) {
+      this.host = player;
+    }
+
     return player;
   }
 
@@ -70,7 +70,7 @@ export class Room {
     this.players.splice(playerIndex, 1);
 
     if (this.players.length > 0) {
-      const isHost = player.displayName === this.host.displayName;
+      const isHost = this.host && player.displayName === this.host.displayName;
       if (isHost) {
         if (this.players.length > 1) {
           const randomIndex = Math.floor(Math.random() * this.players.length);
@@ -89,12 +89,14 @@ export class Room {
     this.isInProgress = true;
     this.gameType = type || "Default";
     this.gameWinner = null;
+    this.roundsCounter = 0;
     this.startNewRound();
   }
 
   startNewRound() {
     if (!this.isInProgress) throw Error("Game is not in progress.");
 
+    this.roundsCounter++;
     this.roundWinner = null;
   }
 
@@ -103,15 +105,24 @@ export class Room {
     this.isInProgress = false;
   }
 
-  broadcast(event: string, data: any, excludedSocketIDs?: string[]) {
+  broadcast(event: string, ...data: any) {
     const server = GameInstance.game.server;
     if (!server) return;
-    const includedPlayers = this.players.filter(
-      (player) => !excludedSocketIDs?.includes(player.socketID)
+    for (const player of this.players) {
+      const socket = server.of("/").sockets.get(player.socketID);
+      if (socket) socket.emit(event, ...data);
+    }
+  }
+
+  broadcastToSockets(socketIDs: string[], event: string, ...data: any) {
+    const server = GameInstance.game.server;
+    if (!server) return;
+    const includedPlayers = this.players.filter((player) =>
+      socketIDs.includes(player.socketID)
     );
     for (const player of includedPlayers) {
       const socket = server.of("/").sockets.get(player.socketID);
-      if (socket) socket.emit(event, data);
+      if (socket) socket.emit(event, ...data);
     }
   }
 }
