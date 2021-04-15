@@ -106,22 +106,22 @@ export class Room {
   }
 
   broadcast(event: string, ...data: any) {
-    const server = GameInstance.game.server;
-    if (!server) return;
+    const io = GameInstance.game.io;
+    if (!io) return;
     for (const player of this.players) {
-      const socket = server.of("/").sockets.get(player.socketID);
+      const socket = io.of("/").sockets.get(player.socketID);
       if (socket) socket.emit(event, ...data);
     }
   }
 
   broadcastToSockets(socketIDs: string[], event: string, ...data: any) {
-    const server = GameInstance.game.server;
-    if (!server) return;
+    const io = GameInstance.game.io;
+    if (!io) return;
     const includedPlayers = this.players.filter((player) =>
       socketIDs.includes(player.socketID)
     );
     for (const player of includedPlayers) {
-      const socket = server.of("/").sockets.get(player.socketID);
+      const socket = io.of("/").sockets.get(player.socketID);
       if (socket) socket.emit(event, ...data);
     }
   }

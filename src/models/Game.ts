@@ -1,13 +1,18 @@
 import { Room } from "./Room";
-import { createServer } from "http";
+import * as http from "http";
 import { Server, Socket } from "socket.io";
 import { Player } from "./Player";
+import * as express from "express"
 
 export class Game {
+  app: Express.Application | null;
+  io: Server | null;
   rooms: Map<string, Room>;
-  server: Server | null;
+  server: http.Server | null;
 
   constructor() {
+    this.app = null;
+    this.io = null;
     this.rooms = new Map();
     this.server = null;
   }
@@ -15,7 +20,8 @@ export class Game {
   async initialize(port?: number) {
     try {
       const PORT = port || 8000;
-      const httpServer = createServer();
+      const app = express();
+      const httpServer = http.createServer(app);
       const io = new Server(httpServer);
 
       httpServer.listen(PORT, () => {
@@ -26,7 +32,9 @@ export class Game {
         console.log("New socket has connected");
       });
 
-      this.server = io;
+      this.app = app;
+      this.io = io;
+      this.server = httpServer;
       return Promise.resolve(io);
     } catch (err) {
       return Promise.reject();
