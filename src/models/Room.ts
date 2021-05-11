@@ -78,6 +78,9 @@ export class Room {
           this.host = newHost;
         }
       }
+    } else {
+      GameInstance.game.closeRoom(this.code)
+      return
     }
   }
 
